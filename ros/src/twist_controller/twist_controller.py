@@ -1,3 +1,7 @@
+import rospy
+from yaw_controller import YawController
+from pid import PID
+from lowpass import LowPassFilter
 
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
@@ -31,7 +35,7 @@ class Controller(object):
         
         self. last_time = rospy.get_time()
 
-    def control(self, *args, **kwargs):
+    def control(self, linear_vel, angular_vel, current_vel, dbw_enabled):
         # TODO: Change the arg, kwarg list to suit your needs
         # Return throttle, brake, steer
         
@@ -65,7 +69,7 @@ class Controller(object):
             
         elif throttle < .1 and vel_error < 0:
             throttle = 0
-            decel = max(vel_error, self.decel_limt)
+            decel = max(vel_error, self.decel_limit)
             brake = abs(decel)*self.vehicle_mass*self.wheel_radius # Torque N*m
         
         return throttle, brake, steering
